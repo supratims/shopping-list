@@ -10,11 +10,11 @@ interface ShoppingListCardProps {
 
 export default function ShoppingListCard({ list }: ShoppingListCardProps) {
     return (
-        <div className="card p-4">
+        <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-8 py-3 w-40">
             <Link href={`/lists/${list.id}`}>
-                <div className="card">
+                <div className="px-4 py-2">
                     <h2>{list.title}</h2>
-                    <p>{list.items.length} items</p>
+                    
                 </div>
             </Link>
         </div>

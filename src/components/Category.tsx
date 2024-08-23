@@ -25,12 +25,12 @@ export default function Category({ category, onCheck, removeCategory, addItem, r
 
     return (
         <div className="category px-3 py-3">
-            <div className="flex space-x-4">
-                <h3>{category.name}</h3>
-                <button onClick={() => removeCategory(category.name)}>Remove Category</button>
+            <div className="flex space-x-4 justify-between">
+                <h3 className='text-lg font-medium'>{category.name}</h3>
+                <button className='text-sm font-light text-gray-500 float-right' onClick={() => removeCategory(category.name)}>Delete</button>
             </div>
             
-            <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-2 pl-4">
                 {category.items.map(item => (
                     <ShoppingListItem 
                         key={item.id} 
@@ -41,14 +41,17 @@ export default function Category({ category, onCheck, removeCategory, addItem, r
                     />
                 ))}
             </div>
-            <div className="pl-4 flex space-x-4">
-                <input 
+            <div className="flex items-center border-b-2 border-teal-500 py-2">
+                <input className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                     type="text" 
                     value={newItem} 
                     onChange={e => setNewItem(e.target.value)} 
                     placeholder="Add new item" 
                 />
-                <button onClick={handleAddItem}>Add Item</button>
+                <button onClick={handleAddItem} className="rounded-full flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-3 rounded"
+                        type="button">
+                            Add
+                        </button>
             </div>
 
             

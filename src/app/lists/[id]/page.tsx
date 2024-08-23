@@ -17,15 +17,22 @@ export default function ShoppingListPage({params}: {params : {id: string} }) {
     const [list, setList] = useState<ShoppingList | null>(null);
     const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
     const [newTitle, setNewTitle] = useState<string>('');
+    const [newCategoryName, setNewCategoryName] = useState<string>('');
+    const [isAddingCategory, setIsAddingCategory] = useState<boolean>(false);
+    
 
     useEffect(() => {
         const lists = JSON.parse(localStorage.getItem('shoppingLists') || '[]') as ShoppingList[];
         const foundList = lists.find(l => l.id === id);
         setList(foundList || null);
         if (foundList) setNewTitle(foundList.title);
+        setNewCategoryName('');
     }, [id]);
 
+    
+
     const handleCheck = (itemId: string) => {
+        console.log("checked ", itemId);
         if (!list) return;
 
         const updatedCategories = list.categories.map(category => ({
@@ -61,6 +68,7 @@ export default function ShoppingListPage({params}: {params : {id: string} }) {
         const updatedList = { ...list, categories: updatedCategories };
         setList(updatedList);
         updateListInStorage(updatedList);
+
     };
 
     const removeItemFromCategory = (categoryName: string, itemId: string) => {
@@ -102,12 +110,15 @@ export default function ShoppingListPage({params}: {params : {id: string} }) {
     };
 
     const addCategory = (name: string) => {
+        if (!name) return;
         if (!list) return;
 
         const newCategory = { name, items: [] };
         const updatedList = { ...list, categories: [...list.categories, newCategory] };
         setList(updatedList);
         updateListInStorage(updatedList);
+        setNewCategoryName('');
+        setIsAddingCategory(false);
     };
 
     const removeCategory = (categoryName: string) => {
@@ -126,6 +137,9 @@ export default function ShoppingListPage({params}: {params : {id: string} }) {
     };
 
     const saveTitle = () => {
+        if (!newTitle){
+            return false;
+        }
         if (list) {
             const updatedList = { ...list, title: newTitle };
             setList(updatedList);
@@ -134,45 +148,77 @@ export default function ShoppingListPage({params}: {params : {id: string} }) {
         }
     };
 
+    const deleteList = (id: string) => {
+        if (!list) return;
+        
+        setIsEditingTitle(false);
+    }
+
     if (!list) return <div>Loading...</div>;
 
     return (
-        <div>
+        <div className="container mx-auto">
             {isEditingTitle ? (
-                <div className='flex space-x-3'>
-                    <input 
-                        type="text" 
-                        value={newTitle} 
-                        onChange={(e) => setNewTitle(e.target.value)} 
-                    />
-                    <button className="btn btn-primary" onClick={saveTitle}>Save</button>
-                    <button onClick={() => setIsEditingTitle(false)}>Cancel</button>
+                <div className='flex items-center px-4 py-2'>
+                    <div className="flex justify-between border-b-2 border-teal-400 py-2">
+                        <input 
+                            className="appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 px-4 leading-tight focus:outline-none"
+                            type="text" 
+                            value={newTitle} 
+                            onChange={(e) => setNewTitle(e.target.value)} 
+                        />
+                        <button 
+                            className="rounded rounded-full flex-shrink-0 bg-teal-600 hover:bg-teal-400 border-teal-600 
+                                hover:border-teal-500 text-sm border-2 text-white py-1 px-2" onClick={saveTitle}>Save</button>
+                        <button 
+                            className="ml-2 rounded rounded-full flex-shrink-0 hover:bg-red-600 border-red-600 
+                                hover:border-teal-600 text-sm border-2 text-red-600 py-1 px-2" onClick={e => deleteList(list.id)}>Delete</button>
+
+                    </div>
                 </div>
+
             ) : (
-                <div className='flex space-x-3'>
-                    <h1>{list.title}</h1>
-                    <button className="btn btn-primary"  onClick={() => setIsEditingTitle(true)}>Edit Title</button>
+                <div className='flex space-x-3 px-5'>
+                    <h3 className="text-lg font-bold text-gray-900" onClick={() => setIsEditingTitle(true)}>{list.title}</h3>
                 </div>
             )}
 
             {list.categories.map(category => (
-                <Category 
-                    key={category.name} 
-                    category={category} 
-                    onCheck={handleCheck} 
-                    removeCategory={removeCategory}
-                    addItem={addItemToCategory}
-                    removeItem={removeItemFromCategory}
-                    renameItem={renameItemInCategory}
-                />
+                <div className="divide-y divide-gray-200 px-4">
+                    <Category 
+                        key={category.name} 
+                        category={category} 
+                        onCheck={handleCheck} 
+                        removeCategory={removeCategory}
+                        addItem={addItemToCategory}
+                        removeItem={removeItemFromCategory}
+                        renameItem={renameItemInCategory}
+                    />
+                </div>
+
             ))}
-            <input 
-                type="text" 
-                placeholder="New Category Name" 
-                onKeyDown={e => {
-                    if (e.key === 'Enter') addCategory(e.target.value);
-                }}
-            />
+            <div className="flex p-4 m-4 justify-center">
+                {isAddingCategory ? (
+                    <>
+                        <input 
+                            type="text" 
+                            value={newCategoryName} 
+                            placeholder="New Category Name" 
+                            className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                            onChange={(e) => setNewCategoryName(e.target.value)} 
+                            onKeyDown={e => {
+                                if (e.key === 'Enter') addCategory(newCategoryName);
+                            }}
+                        />
+                        <button className="text-sm text-blue-700" onClick={e => {addCategory(newCategoryName)}}>Save</button>
+                    </>
+                ) : (
+                    <div className="">
+                        <button className="text-lg text-blue-900 font-bold" onClick={e => setIsAddingCategory(true)}>Add New</button>
+                    </div>
+                )}
+            </div>
+
         </div>
     );
 }

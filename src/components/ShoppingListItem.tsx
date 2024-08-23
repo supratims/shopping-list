@@ -23,29 +23,38 @@ export default function ShoppingListItem({ item, onCheck, removeItem, renameItem
     };
 
     return (
-        <div className="p-2">
-            <input 
-                type="checkbox" 
-                checked={item.checked} 
-                onChange={() => onCheck(item.id)} 
-            />
+
+        
+        <div className="flex items-center justify-between">
+
             {isEditing ? (
                 <>
+                    
                     <input 
                         type="text" 
                         value={newName} 
                         onChange={(e) => setNewName(e.target.value)} 
                     />
-                    <button onClick={handleRename}>Save</button>
-                    <button onClick={() => setIsEditing(false)}>Cancel</button>
+                    <button className='text-sm text-indigo-500' onClick={handleRename}>Save</button>
                 </>
             ) : (
                 <>
-                    <span>{item.name}</span>
-                    <button onClick={() => setIsEditing(true)}>Edit</button>
+                    <div className='flex items-center '>
+                        <input className='h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded'
+                            type="checkbox" 
+                            checked={item.checked} 
+                            onChange={() => onCheck(item.id)} 
+                        />
+                        <div onClick={() => setIsEditing(true)}><span className='ml-3 block text-gray-900'>{item.name}</span></div>
+                    </div>
+                    <div>
+                        <button className='text-sm text-gray-500 ml-1' onClick={removeItem}>Delete</button>
+                    </div>
+
                 </>
             )}
-            <button onClick={removeItem} style={{ marginLeft: '10px' }}>Remove</button>
+            
         </div>
     );
 }
+

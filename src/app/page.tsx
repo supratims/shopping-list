@@ -37,20 +37,24 @@ export default function HomePage() {
     };
 
     return (
-        <div>
-            <h1>Your Shopping Lists</h1>
+        <div className='container mx-auto px-2 text-center'>
+            <h1 className='text-gray-800 font-bold text-2xl '>My Shopping Lists</h1>
             <div className="grid">
                 {shoppingLists.map(list => (
                     <ShoppingListCard key={list.id} list={list} />
                 ))}
             </div>
-            <input 
-                type="text" 
-                value={newListName} 
-                onChange={(e) => setNewListName(e.target.value)} 
-                placeholder="Enter new list name" 
-            />
-            <button onClick={createNewList}>Create New List</button>
+            <div className="flex mt-4 p-4 mx-auto justify-center items-center">
+              <input 
+                  className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-4 leading-tight focus:outline-none"
+                  type="text" 
+                  value={newListName} 
+                  onChange={(e) => setNewListName(e.target.value)} 
+                  placeholder="Enter new list" 
+              />
+              <button className="text-sm font-medium text-blue-900 px-4" onClick={createNewList}>Add</button>
+            </div>
+
         </div>
     );
 }
